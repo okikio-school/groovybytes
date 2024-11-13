@@ -1,6 +1,11 @@
 Pulsar Communication System
 
 ```sh
+curl -fsSL https://get.jetify.com/devbox | bash
+devbox shell
+```
+
+```sh
 docker pull apachepulsar/pulsar:latest
 docker run -d -it \
     -p 6650:6650 \
@@ -22,10 +27,7 @@ docker run -it \
     apachepulsar/pulsar-manager:latest
 ```
 
-The current default account is user: `admin`, password: `apachepulsar`
-
 ```sh
-
 CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
 curl \
    -H 'X-XSRF-TOKEN: $CSRF_TOKEN' \
@@ -34,3 +36,5 @@ curl \
    -X PUT http://localhost:7750/pulsar-manager/users/superuser \
    -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
 ```
+
+The current default account is user: `admin`, password: `apachepulsar`

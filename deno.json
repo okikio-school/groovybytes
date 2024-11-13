@@ -1,6 +1,0 @@
-{
-  "lock": false,
-  "imports": {
-    "pulsar-client": "npm:pulsar-client"
-  }
-}
