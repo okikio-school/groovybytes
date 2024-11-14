@@ -97,8 +97,9 @@ export const DataSourceMetadataSchema = z.object({
   sourceType: z.enum(['sql', 'nosql', 'filesystem', 'mqtt', 'http']), // Data source type
   sourceId: z.string().optional(), // Unique identifier for the source
   compression: z.enum(['none', 'gzip', 'snappy']).optional(), // Compression type
+  encryption: z.enum(['none', 'aes-256', 'rsa']).optional(), // Encryption type
+  checksum: z.enum(['none', 'crc32', 'md5', 'sha256']).optional(), // Checksum type
 });
-
 
 /**
  * Combined metadata schema including traceability, file, TTL, and data source metadata.
