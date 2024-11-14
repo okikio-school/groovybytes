@@ -5,36 +5,27 @@ curl -fsSL https://get.jetify.com/devbox | bash
 devbox shell
 ```
 
-```sh
-docker pull apachepulsar/pulsar:latest
-docker run -d -it \
-    -p 6650:6650 \
-    -p 8080:8080 \
-    -v pulsardata:/pulsar/data \
-    -v pulsarconf:/pulsar/conf \
-    --name pulsar-standalone \
-    apachepulsar/pulsar:latest \
-    bin/pulsar standalone
-```
+### Steps to Deploy:
 
-```sh
-docker pull apachepulsar/pulsar-manager:latest
-docker run -it \
-    -p 9527:9527 -p 7750:7750 \
-    -e SPRING_CONFIGURATION_FILE=/pulsar-manager/pulsar-manager/application.properties \
-    -v $PWD/bkvm.conf:/pulsar-manager/pulsar-manager/bkvm.conf \
-    --link pulsar-standalone \
-    apachepulsar/pulsar-manager:latest
-```
+1. **Create the `bkvm.conf` file**: Ensure you have a `bkvm.conf` file in your current working directory with the appropriate Pulsar Manager configuration.
 
-```sh
-CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
-curl \
-   -H 'X-XSRF-TOKEN: $CSRF_TOKEN' \
-   -H 'Cookie: XSRF-TOKEN=$CSRF_TOKEN;' \
-   -H "Content-Type: application/json" \
-   -X PUT http://localhost:7750/pulsar-manager/users/superuser \
-   -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
-```
+2. **Run Docker Compose**: Use the following command to start the services:
+   ```sh
+   docker-compose up -d ./systems/events/docker-compose.yml
+   ```
 
-The current default account is user: `admin`, password: `apachepulsar`
+3. **Initialize Superuser**: After the containers are running, initialize the superuser using the following commands:
+   ```sh
+   CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
+   curl -H "X-XSRF-TOKEN: $CSRF_TOKEN" \\
+        -H "Cookie: XSRF-TOKEN=$CSRF_TOKEN;" \\
+        -H "Content-Type: application/json" \\
+        -X PUT http://localhost:7750/pulsar-manager/users/superuser \\
+        -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
+   ```
+
+You can then access the Pulsar Manager web UI at `http://localhost:9527` using the default credentials:  
+- **Username**: `admin`  
+- **Password**: `apachepulsar`
+
+This configuration ensures all required ports are mapped and the containers are linked for intercommunication.

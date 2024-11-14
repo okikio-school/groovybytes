@@ -1,0 +1,49 @@
+{
+  "name": "@groovybytes/sinks",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "access": "public",
+  "main": "dist/index.cjs",
+  "browser": "dist/index.js",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./dist/*": "./dist/*",
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "directories": {
+    "dist": "./dist",
+    "src": "./src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "provenance": true
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pulsar-client": "^1.12.0"
+  },
+  "devDependencies": {
+    "@groovybytes/schema": "workspace:^",
+    "tsup": "^8.3.5"
+  }
+}

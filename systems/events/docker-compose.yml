@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  pulsar-standalone:
+    image: apachepulsar/pulsar:latest
+    container_name: pulsar-standalone
+    ports:
+      - "6650:6650"  # Pulsar service port
+      - "8080:8080"  # Pulsar admin port
+    volumes:
+      - pulsardata:/pulsar/data
+      - pulsarconf:/pulsar/conf
+    command: ["bin/pulsar", "standalone"]
+    networks:
+      - pulsar-network
+
+  pulsar-manager:
+    image: apachepulsar/pulsar-manager:latest
+    container_name: pulsar-manager
+    ports:
+      - "9527:9527"  # Pulsar Manager web UI
+      - "7750:7750"  # Pulsar Manager backend
+    environment:
+      - SPRING_CONFIGURATION_FILE=/pulsar-manager/pulsar-manager/application.properties
+    volumes:
+      - ./bkvm.conf:/pulsar-manager/pulsar-manager/bkvm.conf
+    depends_on:
+      - pulsar-standalone
+    networks:
+      - pulsar-network
+
+networks:
+  pulsar-network:
+    driver: bridge
+
+volumes:
+  pulsardata:
+  pulsarconf:

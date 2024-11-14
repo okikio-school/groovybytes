@@ -1,4 +1,4 @@
-import Pulsar from 'pulsar-client';
+
 
 (async () => {
   // Create a client

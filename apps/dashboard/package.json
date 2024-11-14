@@ -10,7 +10,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.16.12",
-    "@astrojs/check": "^0.9.4"
+    "@astrojs/check": "^0.9.4",
+    "astro": "^4.16.12"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
   }
 }
