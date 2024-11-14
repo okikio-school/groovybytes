@@ -42,12 +42,12 @@ After running these steps, the Pulsar Manager is running locally at http://127.0
     If you are deploying Pulsar Manager using the latest code, you can create a super-user using the following command. Then you can use the super user credentials to log in the Pulsar Manager UI.
 
     ```
-    CSRF_TOKEN=$(curl http://backend-service:7750/pulsar-manager/csrf-token)
+    CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
     curl \
         -H "X-XSRF-TOKEN: $CSRF_TOKEN" \
         -H "Cookie: XSRF-TOKEN=$CSRF_TOKEN;" \
         -H 'Content-Type: application/json' \
-        -X PUT http://backend-service:7750/pulsar-manager/users/superuser \
+        -X PUT http://localhost:7750/pulsar-manager/users/superuser \
         -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
     ```
 
@@ -64,207 +64,207 @@ After running these steps, the Pulsar Manager is running locally at http://127.0
         - You need to make sure the service url that Pulsar Manager is able to access. In this example, both pulsar container and pulsar-manager container are linked. So you can use pulsar container name as the domain name of the pulsar standalone cluster. Thus you can type `http://pulsar-standalone:8080`.
     - Input the "Bookie URL". In this example, you can type `http://pulsar-standalone:6650`
 
-## Configure Pulsar Manager
+---
 
-### Back end
+To handle various **data source formats** effectively within the Pulsar messaging system, we need to integrate the data format characteristics into the **message schema**, **topic structure**, and **Pulsar client configurations**. Here’s how you can incorporate different data formats:
 
-For more information about the back end, see [pulsar-manager-backend](https://github.com/apache/pulsar-manager/blob/master/src/README.md).
+### **Handling Data Source Formats**
 
-### Front end
+#### **1. Key Data Formats to Address**
+1. **Structured Data**: SQL/NoSQL databases.
+2. **Semi-Structured Data**: JSON, XML, YAML, CSV.
+3. **Unstructured Data**: Files (images, videos, text).
+4. **Streaming Data**: MQTT, WebSockets, or other brokers.
+5. **Data Transfer Protocols**: HTTP, FTP, etc.
 
-For more information about the front end, see [pulsar-manager-frontend](https://github.com/apache/pulsar-manager/blob/master/front-end/README.md).
+#### **2. Incorporating Data Formats into Pulsar**
 
-## Features
+**a. Use Message Properties**
+- Pulsar supports **message properties**, which are key-value pairs stored alongside the message payload.
+- Include metadata in properties for each message to describe the source, format, and other details.
 
-* Tenants Management
-* Namespaces Management
-* Topics Management
-* Subscriptions Management
-* Brokers Management
-* Clusters Management
-* Dynamic environments with multiple changes
-* Support JWT Auth
+**Example Properties**:
+- `format`: `json`, `csv`, `xml`, `binary`.
+- `sourceType`: `sql`, `nosql`, `filesystem`, `mqtt`.
+- `sourceId`: Unique identifier for the data source.
+- `compression`: `gzip`, `snappy`, etc. (if payloads are compressed).
 
-### Log in
+**b. Design Topic Subscriptions by Format**
+- To simplify consumer logic, create sub-topics or subscriptions based on data formats.
+- For example:
+  - `public/ingestion/input/json`
+  - `public/ingestion/input/csv`
+  - `public/ingestion/input/xml`
 
-Use the default account (`pulsar`) and the default password (`pulsar`) to log in.
+---
 
-![pulsar-manager-login](docs/img/pulsar-manager-login.gif)
+### **Updated Namespaces/Topics with Data Formats**
 
-### Configure environment
+| **Namespace**       | **Topic**                  | **Partitions** | **Purpose**                              | **Format**   |
+|----------------------|----------------------------|----------------|------------------------------------------|--------------|
+| `ingestion`          | `input/json`              | 3              | Receives JSON data.                      | JSON         |
+| `ingestion`          | `input/csv`               | 3              | Receives CSV data.                       | CSV          |
+| `ingestion`          | `input/xml`               | 3              | Receives XML data.                       | XML          |
+| `ingestion`          | `output`                  | 3              | Sends merged data streams onward.        | Mixed        |
+| `formatting`         | `input`                   | 3              | Receives data for sanitization.          | Mixed        |
+| `formatting`         | `output`                  | 3              | Sends formatted data to analysis.        | Mixed        |
+| `analysis`           | `input`                   | 3              | Receives formatted data.                 | Mixed        |
+| `analysis`           | `output`                  | 3              | Sends analysis results to dashboard.     | Mixed        |
+| `logging`            | `system`                  | 1              | Logs system-wide operations.             | Logs         |
+| `notifications`      | `alerts`                  | 1              | Sends alerts to notification systems.    | Alerts       |
+| `errors`             | `system`                  | 1              | Captures system error messages.          | Errors       |
 
-The pulsar-manager supports multiple environment configurations and can manage multiple environments conveniently.
+---
 
-Here, the service URL represents the service IP address of the broker. If you run Pulsar manager in the standalone mode, it should be set to "http://127.0.0.1:8080".
-You can easily find it in the client.conf file of your pulsar-manager.
+### **3. Message Schema for Data Formats**
 
-And the bookie URL represents the service IP address of the bookkeeper. If you run Pulsar manager in the standalone mode, it should be set to "http://127.0.0.1:6650".
+Use Zod to incorporate `format` and `sourceType` into your message schema.
 
-![pulsar-manager-environments](docs/img/pulsar-manager-environments.gif)
+```ts
+import { z } from "zod";
 
-### Manage tenants
+// Metadata schema to handle source and format details
+export const DataSourceMetadataSchema = z.object({
+  format: z.enum(['json', 'csv', 'xml', 'binary', 'text']), // Data format
+  sourceType: z.enum(['sql', 'nosql', 'filesystem', 'mqtt', 'http']), // Data source type
+  sourceId: z.string().optional(), // Unique identifier for the source
+  compression: z.enum(['none', 'gzip', 'snappy']).optional(), // Compression type
+});
 
-![pulsar-manager-tenants](docs/img/pulsar-manager-tenants.gif)
+// Extend the MetadataSchema to include the data source details
+export const MetadataSchema = MetadataSchema.extend({
+  dataSource: DataSourceMetadataSchema.optional(),
+});
 
-### Manage namespaces
+// Example payload for JSON data
+export const JsonPayloadSchema = z.object({
+  data: z.record(z.any()), // Key-value pairs
+});
 
-![pulsar-manager-namespaces](docs/img/pulsar-manager-namespaces.gif)
+// Example payload for CSV data
+export const CsvPayloadSchema = z.object({
+  rows: z.array(z.record(z.string())), // Array of rows with string key-value pairs
+});
 
-### Manage topics
+// Example unified payload schema
+export const PayloadSchema = z.union([
+  JsonPayloadSchema,
+  CsvPayloadSchema,
+  // Add other payload schemas (XML, binary, etc.)
+]);
 
-![pulsar-manager-topics](docs/img/pulsar-manager-topics.gif)
+// Message schema
+export const MessageSchema = z.object({
+  header: HeaderSchema,
+  payload: PayloadSchema,
+  meta: MetadataSchema,
+});
 
-
-### Manage subscriptions
-
-![pulsar-manager-subscriptions](docs/img/pulsar-manager-subscriptions.gif)
-
-### Manage clusters
-
-![pulsar-manager-clusters](docs/img/pulsar-manager-clusters.gif)
-
-### Manage brokers
-
-![pulsar-manager-brokers](docs/img/pulsar-manager-brokers.gif)
-
-
-### Topics monitoring
-
-The pulsar-manager can monitor topics and subscriptions.
-
-![pulsar-manager-topics-monitors](docs/img/pulsar-manager-topics-monitors.gif)
-
-### Manage token
-
-![pulsar-manager-token](docs/img/pulsar-manager-token.gif)
-
-## Casdoor
-
-
-### Casdoor Installation
-
-You can use casdoor to realize sso.
-
-Casdoor can connect to Pulsar-manager simply.
-
-Because the code for connecting the casdoor has been added in Pulsar-manager, we need to configure the casdoor in the back-end and front-end.
-
-#### Step1. Deploy Casdoor
-
-Firstly, the Casdoor should be deployed.
-
-You can refer to the Casdoor official documentation for the [Casdoor](https://casdoor.org/docs/overview)
-
-After a successful deployment, you need to ensure:
-
-- The Casdoor server is successfully running on **http://localhost:8000**.
-- Open your favorite browser and visit **http://localhost:7001**, you will see the login page of Casdoor.
-- Input `admin` and `123` to test login functionality is working fine.
-
-Then you can quickly implement a casdoor based login page in your app with the following steps.
-
-#### step2. Configure Casdoor
-
-Configure casdoor can refer to [casdoor](https://door.casdoor.com/login)(Configure casdoor's browser better not use one browser with your develop browser).
-
-You also should configure the organization, and application, you also can refer to [casdoor](https://door.casdoor.com/login).
-
-##### step2.1 you should create an organization
-
-![organization](/docs/img/Pulsar-manager_editOrganization.svg)
-
-##### step2.2 you should create an application
-
-![application](/docs/img/Pulsar-manager_editApplication.svg)
-
-#### Step3. Configure back-end code
-
-You should configure casdoor's Configuration in the Line 154 of pulsar-manager/src/main/resources/application.properties
-
-```ini
-casdoor.endpoint=http://localhost:8000
-casdoor.clientId=<client id in previous step>
-casdoor.clientSecret=<client Secret in previous step>
-casdoor.certificate=<client certificate in previous step>
-casdoor.organizationName=pulsar
-casdoor.applicationName=app-pulsar
-```
-
-#### Step4. Configure front-end code
-
-You also need configure casdoor's Configuration in the Line 50 of pulsar-manager/front-end/src/main.js
-
-```
-const config = {
-  serverUrl: "http://localhost:7001",
-  clientId: "6ba06c1e1a30929fdda7",
-  organizationName: "pulsar",
-  appName: "app-plusar",
-  redirectPath: "/#callback",
+// Example message for a JSON payload
+const jsonMessage = {
+  header: {
+    messageId: 'uuid-1234',
+    source: 'input-sink-1',
+    destination: 'ingestion/input/json',
+    timestamp: Date.now(),
+    type: 'data',
+    protocolVersion: '1.0',
+  },
+  payload: {
+    data: {
+      temperature: 22.5,
+      humidity: 60,
+    },
+  },
+  meta: {
+    dataSource: {
+      format: 'json',
+      sourceType: 'filesystem',
+      sourceId: 'file-001',
+    },
+    priority: 'high',
+  },
 };
+
+// Validate the JSON message
+const parsedMessage = MessageSchema.safeParse(jsonMessage);
+if (!parsedMessage.success) {
+  console.error(parsedMessage.error);
+} else {
+  console.log('Validated Message:', parsedMessage.data);
+}
 ```
 
-Now you can use Casdoor.
+---
 
-## Development
+### **4. Script Updates for Data Formats**
 
-### Default Test database HerdDB
+The Bash script will now:
+1. Create additional topics for different data formats.
+2. Organize topics by format under the `ingestion` namespace.
 
-#### Introduction
+```bash
+#!/bin/bash
 
-Pulsar Manager bundles JDBC Drivers for [HerdDB](https://github.com/diennea/herddb).
-The default configuration starts and embedded in-memory only HerdDB database.
+# Pulsar Admin REST API URL
+PULSAR_ADMIN_URL="http://localhost:8080/admin/v2"
 
-HerdDB can be used in production, you just have to use the  correct JDBC URL.
-Follow the instructions in [application.properties](https://github.com/apache/pulsar-manager/blob/master/src/main/resources/application.properties) to switch the connection to a standalone HerdDB service or cluster.
+# Namespaces and Topics
+declare -A NAMESPACES_TOPICS=(
+  ["ingestion"]="input/json:3 input/csv:3 input/xml:3 output:3"
+  ["formatting"]="input:3 output:3"
+  ["analysis"]="input:3 output:3"
+  ["logging"]="system:1"
+  ["notifications"]="alerts:1"
+  ["errors"]="system:1"
+)
 
-The JDBC URL will look like this:
-jdbc:herddb:server:localhost:7000
+# Start Pulsar with Docker Compose
+echo "Starting Pulsar with Docker Compose..."
+docker-compose up -d
 
-In cluster mode HerdDB uses Apache BookKeeper and Apache ZooKeeper to store data and metadata, you can share your ZooKeeper cluster and the Bookies bundled with Pulsar.
+# Check if Pulsar is ready
+function is_pulsar_ready {
+  curl -s "${PULSAR_ADMIN_URL}/clusters" > /dev/null
+  return $?
+}
 
-The JDBC URL will look like this:
-jdbc:herddb:zookeeper:localhost:2181/herddb
+echo "Waiting for Pulsar to be ready..."
+while ! is_pulsar_ready; do
+  echo "Pulsar is not ready yet. Retrying in 5 seconds..."
+  sleep 5
+done
+echo "Pulsar is ready!"
 
-In order to start and setup an HerdDB database follow the instructions on the [HerdDB documentation](https://github.com/diennea/herddb/wiki).
+# Create namespaces and topics
+for namespace in "${!NAMESPACES_TOPICS[@]}"; do
+  echo "Creating namespace: ${namespace}"
+  curl -s -X PUT "${PULSAR_ADMIN_URL}/namespaces/public/${namespace}" -H "Content-Type: application/json"
+
+  topics=${NAMESPACES_TOPICS[$namespace]}
+  IFS=" " read -r -a topic_array <<< "$topics"
+  for topic_data in "${topic_array[@]}"; do
+    IFS=":" read -r topic partitions <<< "$topic_data"
+    echo "Creating topic: public/${namespace}/${topic} with ${partitions} partitions"
+    curl -s -X PUT "${PULSAR_ADMIN_URL}/persistent/public/${namespace}/${topic}/partitions" \
+      -H "Content-Type: application/json" \
+      -d "$partitions"
+  done
+done
+
+echo "Pulsar setup complete!"
+```
 
 ---
 
-### Optimization of Topics and Namespaces**
+### **Summary**
+1. **Namespaces and Topics**:
+   - Include topics specific to data formats (e.g., `input/json`, `input/csv`).
 
-#### **Optimization Notes:**
-1. Many log topics (`logs.ingestion-system`, `logs.formatting-system`, etc.) can be merged under one topic with system identification added in metadata.
-2. Status topics can also be merged into a common `status.systems` topic with a similar approach.
-3. Event topics (`backpressure`, `system-alerts`, `error-events`) are distinct but can be grouped under a single namespace for alerts.
+2. **Message Schema**:
+   - Add metadata fields for `format`, `sourceType`, `compression`, and `sourceId`.
 
----
+3. **Bash Script**:
+   - Automate creation of format-specific topics in `ingestion`.
 
-### **Optimized Table**
-
-| **Namespace**           | **Topic**               | **Message Type** | **Source**                | **Destination**               | **System**                  | **Input Sink**       | **Output Sink**         |
-|--------------------------|-------------------------|------------------|---------------------------|--------------------------------|-----------------------------|----------------------|--------------------------|
-| `ingestion`              | `data.input`           | `data`           | CSV, XML, JSON, MQTT      | Ingestion System              | Ingestion System            | REST API, MQTT       | Apache Pulsar Topic      |
-| `ingestion`              | `data.merged-streams`  | `data`           | Ingestion System          | Formatting System             | Ingestion System            | Pulsar Input         | Pulsar Output           |
-| `processing`             | `data.processing-flags`| `data`           | Formatting System         | Analysis System               | Formatting System           | Pulsar Input         | Pulsar Output           |
-| `analysis`               | `data.analysis-results`| `data`           | Analysis System           | Dashboard / Operational DB    | Analysis System             | Pulsar Input         | PostgreSQL / Pulsar Sink|
-| `monitoring`             | `status.systems`       | `status`         | Any System                | Monitoring System             | Monitoring System           | REST API, Pulsar     | Prometheus, Pulsar      |
-| `alerts`                 | `event.alerts`         | `event`          | Any System                | Notification System           | Notification System         | Metrics Collector    | Email/SMS/Webhooks      |
-| `logging`                | `logs.system-logs`     | `log`            | Any System                | Central Log Store             | Logging System              | FluentBit            | Elasticsearch           |
-| `error-handling`         | `event.errors`         | `event`          | Any System                | Error Management System       | Error Handling System       | Pulsar               | Alerts / Logs           |
-
----
-
-### **Final Optimized Details**
-1. **Topics:**
-   - Data: `data.input`, `data.merged-streams`, `data.processing-flags`, `data.analysis-results`.
-   - Logs: Unified as `logs.system-logs`.
-   - Events: `event.alerts`, `event.errors`.
-   - Status: Unified as `status.systems`.
-
-2. **Namespaces:**
-   - Simplified to `ingestion`, `processing`, `analysis`, `monitoring`, `alerts`, `logging`, `error-handling`.
-
-3. **Metadata Usage:**
-   - System-specific details (e.g., `ingestion-system`, `formatting-system`) are added as metadata fields in logs and status messages for filtering and processing.
-
-This optimized structure reduces redundancy while retaining flexibility for system identification and routing. Let me know if you need additional refinements or explanations!
+This setup accommodates various data formats while keeping the system modular and extensible. Let me know if you need further refinements!

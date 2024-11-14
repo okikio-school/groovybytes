@@ -1,4 +1,4 @@
-import { MessageSchema } from "./index.ts";
+import { MessageSchema } from "./schema.ts";
 
 /**
  * Example usage: Validating a data message.
@@ -39,3 +39,38 @@ const exampleDataMessage = {
 // Validate the example message
 const parsedMessage = MessageSchema.parse(exampleDataMessage);
 console.log("Validated Message:", parsedMessage);
+
+
+// Example message for a JSON payload
+const jsonMessage = {
+  header: {
+    messageId: 'uuid-1234',
+    source: 'input-sink-1',
+    destination: 'ingestion/input/json',
+    timestamp: Date.now(),
+    type: 'data',
+    protocolVersion: '1.0',
+  },
+  payload: {
+    data: {
+      temperature: 22.5,
+      humidity: 60,
+    },
+  },
+  meta: {
+    dataSource: {
+      format: 'json',
+      sourceType: 'filesystem',
+      sourceId: 'file-001',
+    },
+    priority: 'high',
+  },
+};
+
+// Validate the JSON message
+const parsedMessage2 = MessageSchema.safeParse(jsonMessage);
+if (!parsedMessage2.success) {
+  console.error(parsedMessage2.error);
+} else {
+  console.log('Validated Message:', parsedMessage2.data);
+}
