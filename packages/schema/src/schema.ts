@@ -77,6 +77,7 @@ export const FileMetadataSchema = z.object({
   fileType: z.string().optional(), // MIME type of the file
   fileSize: z.number().optional(), // Size of the file in bytes
   chunkId: z.number().optional(), // Chunk ID for file streaming
+  chunkSize: z.number().optional(), // Size of the chunk in bytes
   totalChunks: z.number().optional(), // Total number of chunks in the file
 });
 
@@ -96,7 +97,7 @@ export const DataSourceMetadataSchema = z.object({
   format: z.enum(['json', 'csv', 'xml', 'binary', 'text']), // Data format
   sourceType: z.enum(['sql', 'nosql', 'filesystem', 'mqtt', 'http']), // Data source type
   sourceId: z.string().optional(), // Unique identifier for the source
-  compression: z.enum(['none', 'gzip', 'snappy']).optional(), // Compression type
+  compression: z.enum(['none', 'gzip', 'zstd']).optional(), // Compression type
   encryption: z.enum(['none', 'aes-256', 'rsa']).optional(), // Encryption type
   checksum: z.enum(['none', 'crc32', 'md5', 'sha256']).optional(), // Checksum type
 });
