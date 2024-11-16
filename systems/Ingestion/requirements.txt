@@ -1,0 +1,6 @@
+flask
+paho-mqtt
+pandas
+openpyxl
+apscheduler
+xlrd
