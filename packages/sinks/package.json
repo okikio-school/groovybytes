@@ -18,6 +18,16 @@
         "default": "./dist/index.js"
       }
     },
+    "./ctx": {
+      "require": {
+        "types": "./dist/ctx.d.cts",
+        "default": "./dist/ctx.cjs"
+      },
+      "import": {
+        "types": "./dist/ctx.d.ts",
+        "default": "./dist/ctx.js"
+      }
+    },
     "./dist/*": "./dist/*",
     "./src/*": "./src/*",
     "./package.json": "./package.json"
@@ -40,6 +50,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nick/dispose": "npm:@jsr/nick__dispose@^1.1.0",
     "pulsar-client": "^1.12.0"
   },
   "devDependencies": {

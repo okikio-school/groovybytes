@@ -208,3 +208,12 @@ export const MessageSchema = z.object({
   meta: MetadataSchema, // Metadata schema
 });
 
+/**
+ * Type alias for the inferred type of a Zod schema.
+ */
+export type InferSchema<T extends z.ZodType<any, any>> = z.infer<T>;
+
+/**
+ * Type alias for the inferred type of a message schema.
+ */
+export { z as Zod };

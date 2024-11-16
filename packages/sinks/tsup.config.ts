@@ -1,1 +1,1 @@
-export { default } from "../../tsup.config.js"
+export { default } from "../../tsup.config.ts"
