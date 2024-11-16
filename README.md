@@ -10,7 +10,7 @@ The platform consists of several systems that work together to provide a seamles
 
 The platform also includes a user-facing dashboard built with Astro, a modern static site generator for building websites.
 
-![GroovyBytes Architecture](groovybytes-architecture.png)
+![GroovyBytes Architecture](assets/groovybytes-architecture.png)
 
 ## Project Setup
 
