@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Ingestion System</title>
+    
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        .container { max-width: 800px; margin-top: 30px; }
+        .status-uploaded { color: blue; }
+        .status-queued { color: orange; }
+        .status-processing { color: purple; }
+        .status-processed { color: green; }
+        .status-error { color: red; }
+        .table th, .table td { vertical-align: middle; }
+        #responseMessage { margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Data Ingestion System</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/view_data"><i class="fas fa-table"></i> Output Sink</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="/download_output"><i class="fas fa-download"></i> Download Excel</a>
+                </li> -->
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h2 class="mt-4">Input Sink</h2>
+        
+        
+        <form id="uploadForm" class="form-inline mb-4" style="flex-flow: row; align-items: center;" action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group mr-4" style="width: 370px;">
+                <label for="file" class="mr-2">Choose file:</label>
+                <input type="file" class="form-control-file" id="file" name="file" required>
+                <span class ="text-muted" style="margin-top: 10px;">(Supported Formats XLSX, XLS, CSV, JSON, MQTT)</span>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Upload</button>
+        </form>
+        
+        
+        <div id="responseMessage"></div>
+        
+        <h2 class="mt-5">File Processing Status</h2>
+        
+        
+        <table id="statusTable" class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>File Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="statusBody">
+            
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        
+        $('#uploadForm').on('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/upload',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#responseMessage').html('<div class="alert alert-success"><i class="fas fa-check-circle"></i> ' + response.message + '</div>');
+                    fetchStatus();
+                },
+                error: function(xhr) {
+                    $('#responseMessage').html('<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Error: ' + xhr.status + ' - ' + xhr.statusText + '</div>');
+                }
+            });
+        });
+
+        
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/status');
+                const statusData = await response.json();
+                const statusBody = document.getElementById('statusBody');
+                
+                
+                statusBody.innerHTML = '';
+
+                
+                for (const [fileName, status] of Object.entries(statusData)) {
+                    const row = document.createElement('tr');
+                    const fileCell = document.createElement('td');
+                    const statusCell = document.createElement('td');
+
+                    fileCell.textContent = fileName;
+
+                    
+                    let statusIcon, statusClass;
+                    if (status === 'uploaded') {
+                        statusIcon = 'fas fa-upload';
+                        statusClass = 'status-uploaded';
+                    } else if (status === 'queued') {
+                        statusIcon = 'fas fa-clock';
+                        statusClass = 'status-queued';
+                    } else if (status === 'processing') {
+                        statusIcon = 'fas fa-cogs';
+                        statusClass = 'status-processing';
+                    } else if (status === 'processed') {
+                        statusIcon = 'fas fa-check-circle';
+                        statusClass = 'status-processed';
+                    } else if (status === 'error') {
+                        statusIcon = 'fas fa-exclamation-circle';
+                        statusClass = 'status-error';
+                    }
+
+                    statusCell.innerHTML = `<i class="${statusIcon} ${statusClass}"></i> ${status}`;
+                    row.appendChild(fileCell);
+                    row.appendChild(statusCell);
+                    statusBody.appendChild(row);
+                }
+            } catch (error) {
+                console.error('Error fetching status:', error);
+            }
+        }
+
+        
+        setInterval(fetchStatus, 1000);
+        fetchStatus();
+    </script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
