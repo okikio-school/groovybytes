@@ -46,7 +46,7 @@ const jsonMessage = {
   header: {
     messageId: 'uuid-1234',
     source: 'input-sink-1',
-    destination: 'ingestion/input/json',
+    destination: 'persistent://public/ingestion/input.json',
     timestamp: Date.now(),
     type: 'data',
     protocolVersion: '1.0',

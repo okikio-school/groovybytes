@@ -51,6 +51,26 @@ export default function Component() {
     }
   }
 
+  const handleUpload = async () => {
+    if (!files.length) return;
+
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('files', file);
+    });
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (response.ok) {
+      console.log('Files uploaded successfully');
+    } else {
+      console.error('Error uploading files');
+    }
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto">
       <div
@@ -111,6 +131,15 @@ export default function Component() {
           ))}
         </div>
       )}
+
+      <Button
+        variant="default"
+        size={files.length > 0 ? 'lg' : 'sm'}
+        onClick={handleUpload}
+        className="bg-blue-500/40 hover:bg-blue-400/20"
+      >
+        <span>Upload Files</span>
+      </Button>
     </div>
   )
 }

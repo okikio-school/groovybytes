@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { JSONSchema } from "./utils";
 
 /**
  * Helper function to create Zod enums dynamically from an object.
@@ -118,12 +119,12 @@ export const MetadataSchema = TraceMetadataSchema.merge(FileMetadataSchema)
 
 // Example payload for JSON data
 export const JsonPayloadSchema = z.object({
-  data: z.record(z.any()), // Key-value pairs
+  data: JSONSchema, // Key-value pairs
 });
 
 // Example payload for CSV data
 export const CsvPayloadSchema = z.object({
-  rows: z.array(z.record(z.string())), // Array of rows with string key-value pairs
+  rows: z.array(JSONSchema), // Array of rows with string key-value pairs
 });
 
 export const XmlPayloadSchema = z.object({

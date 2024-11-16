@@ -9,9 +9,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "execa": "^9.5.1",
-    "tsx": "^4.19.2"
-  }
+  "license": "ISC"
 }
