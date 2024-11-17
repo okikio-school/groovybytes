@@ -1,5 +1,11 @@
-export * from "./output/output.ts";
 export * from "./input/ingestion.ts";
+export * from "./output/ingestion.ts";
 
-export * as InputSink from "./input/ingestion.ts";
-export * as OutputSink from "./output/output.ts";
+export * as IngestionInputSink from "./input/ingestion.ts";
+export * as IngestionOutputSink from "./output/ingestion.ts";
+
+export * from "./input/formatting.ts";
+export * from "./output/formatting.ts";
+
+export * as FormattingInputSink from "./input/formatting.ts";
+export * as FormattingOutputSink from "./output/formatting.ts";

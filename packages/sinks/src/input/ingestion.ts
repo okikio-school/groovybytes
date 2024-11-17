@@ -1,126 +1,38 @@
 // src/utils/inputSink.ts
 import { PulsarContext, sendData, receiveDataIterator } from '../ctx.ts';
-import { parse } from '@std/csv';
-import { encodeBase64 } from '@std/encoding';
-import { MessageSchema } from '@groovybytes/schema/src/index.ts';
+import { BinaryPayloadSchema, MessageSchema, type InferSchema } from '@groovybytes/schema/src/index.ts';
+import { interleaveIterators, sendToPython } from '../utils.ts';
+import { decodeBase64 } from '@std/encoding';
 
-// adapt import to the targeted JS runtime
-import {
-  availableParallelism,
-  FixedThreadPool,
-  PoolEvents,
-} from '@poolifier/poolifier-web-worker'
+export async function runIngestionInputSink() {
+  const ctx = new PulsarContext();
 
-// a fixed web worker pool
-const pool = new FixedThreadPool(
-  availableParallelism(),
-  new URL('./workers/_worker.ts', import.meta.url),
-  {
-    errorEventHandler: (e) => {
-      console.error(e)
-    },
-    workerOptions: {
-      type: "module",
+  const formats = ['json', 'csv', 'xml', 'binary', 'text'];
+  const dataIter = interleaveIterators(
+    ...formats.map((fmt) => {
+      return receiveDataIterator(
+        ctx,
+        `persistent://public/ingestion/input.${fmt}`,
+        `ingestion-input-sink-${fmt}`
+      )
+    })
+  );
+
+  for await (const data of dataIter) {
+    if (!data) { continue; }
+
+    const { success, data: message } = MessageSchema.safeParse(data)
+    if (!success) {
+      console.error('Invalid message received:', data);
+      continue;
     }
-  },
-);
 
-// Utility to send data to a Python process via HTTP
-async function sendToPython(payload: any): Promise<void> {
-  const pythonUrl = 'http://localhost:5000/process'; // Python server endpoint
-  try {
-    const response = await fetch(pythonUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    console.log('Received data:', data);
 
-    if (!response.ok) {
-      console.error(`Failed to send data to Python: ${response.statusText}`);
-    } else {
-      console.log('Data successfully sent to Python.');
-    }
-  } catch (error) {
-    console.error('Error sending data to Python:', error);
+    const payload = decodeBase64((message.payload as InferSchema<typeof BinaryPayloadSchema>).data);
+    const blob = new Blob([payload], { type: message.meta.fileType });
+    const file = new File([blob], message.meta.fileName ?? "unknown-file", { type: message.meta.fileType });
+    await sendToPython(file);
+    // await sendData(ctx, data);
   }
-}
-
-// Function to process incoming files
-export async function processFile(
-  file: File,
-  pulsarContext: PulsarContext
-): Promise<void> {
-  const arrayBuffer = await file.arrayBuffer();
-  const uint8Array = new Uint8Array(arrayBuffer);
-
-  // Determine the data format
-  let format: 'json' | 'csv' | 'xml' | 'binary' | 'text' = 'binary';
-  if (file.type === 'application/json' || file.name.endsWith('.json')) {
-    format = 'json';
-  } else if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-    format = 'csv';
-  } else if (file.type === 'application/xml' || file.name.endsWith('.xml')) {
-    format = 'xml';
-  } else if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
-    format = 'text';
-  }
-
-  // Create a JSON payload
-  let payload;
-  switch (format) {
-    case 'json':
-      payload = { data: JSON.parse(new TextDecoder().decode(uint8Array)) };
-      break;
-    case 'csv':
-      payload = {
-        rows: parse(new TextDecoder().decode(uint8Array), { skipFirstRow: true }),
-      };
-      break;
-    case 'xml':
-    case 'text':
-    case 'binary':
-    default:
-      payload = { data: encodeBase64(uint8Array) };
-      break;
-  }
-
-  // Generate a message
-  const messageId = crypto.randomUUID();
-  const topic = `persistent://public/ingestion/input.${format}`;
-  const message = {
-    header: {
-      messageId,
-      source: 'input-sink',
-      destination: topic,
-      timestamp: Date.now(),
-      type: 'data',
-      protocolVersion: '1.0',
-    },
-    payload,
-    meta: {
-      traceIds: [messageId],
-      data: {
-        format,
-        sourceType: 'filesystem',
-        sourceId: file.name,
-      },
-      fileName: file.name,
-      fileType: file.type,
-      fileSize: file.size,
-    },
-  };
-
-  // Validate against the schema
-  const validationResult = MessageSchema.safeParse(message);
-  if (!validationResult.success) {
-    console.error('Validation failed:', validationResult.error);
-    throw new Error('Invalid message schema');
-  }
-
-  // Send to Pulsar and Python
-  await sendData(pulsarContext, topic, message);
-  await sendToPython(payload);
-  console.log(`File ${file.name} processed successfully.`);
 }

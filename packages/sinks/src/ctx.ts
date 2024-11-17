@@ -115,6 +115,7 @@ export async function sendData(context: PulsarContext, topic: string, data: any)
 
   // Encode the data as a UTF-8 string and send it as a message to the topic
   await producer.send({
+    // @ts-ignore - The Pulsar client types expect a Buffer, but we're using a Uint8Array
     data: new TextEncoder().encode(JSON.stringify(data)),
   });
 
@@ -142,11 +143,11 @@ export async function sendData(context: PulsarContext, topic: string, data: any)
  * }
  * ```
  */
-export async function* receiveDataIterator(
+export async function* receiveDataIterator<T>(
   context: PulsarContext,
   topic: string,
   subscription: string
-): AsyncGenerator<any, void, unknown> {
+): AsyncGenerator<T, void, unknown> {
   // Get a consumer for the specified topic and subscription from the Pulsar context
   const consumer = await context.getConsumer(topic, subscription);
 

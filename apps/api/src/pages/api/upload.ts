@@ -58,15 +58,15 @@ export const POST: APIRoute = async ({ request }) => {
         let payload;
         switch (format) {
           case 'json':
-            payload = {
-              data: JSON.parse(new TextDecoder().decode(uint8Array)),
-            };
-            break;
+            // payload = {
+            //   data: JSON.parse(new TextDecoder().decode(uint8Array)),
+            // };
+            // break;
           case 'csv':
-            payload = {
-              rows: parse(new TextDecoder().decode(uint8Array), { skipFirstRow: true }),
-            };
-            break;
+            // payload = {
+            //   rows: parse(new TextDecoder().decode(uint8Array), { skipFirstRow: true }),
+            // };
+            // break;
           case 'xml':
           case 'text':
           case 'binary':
@@ -91,7 +91,7 @@ export const POST: APIRoute = async ({ request }) => {
           payload,
           meta: {
             traceIds: [messageId],
-            data: {
+            source: {
               format,
               sourceType: 'filesystem',
               sourceId: file.name,

@@ -109,7 +109,7 @@ export const DataSourceMetadataSchema = z.object({
 export const MetadataSchema = TraceMetadataSchema.merge(FileMetadataSchema)
   .merge(TTLMetadataSchema.partial())
   .extend({
-    data: DataSourceMetadataSchema.optional(), // Data source metadata
+    source: DataSourceMetadataSchema.optional(), // Data source metadata
     retry: RetryMetadataSchema.optional(), // Retry metadata
     errorDetails: ErrorDetailsSchema.optional(), // Error details metadata
     throughput: z.number().optional(), // Data throughput in KB/sec

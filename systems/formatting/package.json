@@ -5,9 +5,16 @@
   "description": "",
   "access": "public",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsx main.ts"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@groovybytes/sinks": "workspace:^"
+  },
+  "devDependencies": {
+    "execa": "^9.5.1",
+    "tsx": "^4.19.2"
+  }
 }
