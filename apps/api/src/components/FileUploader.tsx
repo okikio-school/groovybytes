@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Check, Cloud, X } from 'lucide-react'
 
-export default function Component() {
+export default function FileUploader() {
   const [files, setFiles] = React.useState<File[]>([])
   const [dragActive, setDragActive] = React.useState(false)
   const inputRef = React.useRef<HTMLInputElement>(null)

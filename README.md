@@ -30,6 +30,7 @@ Or, you can install the required tools manually.
 Ensure you have the following installed:
 - [Node.js](https://nodejs.org/) (version specified in `.nvmrc`)
 - [pnpm](https://pnpm.io/installation)
+- [python](https://www.python.org/)
 - [Docker](https://docs.docker.com/get-docker/)
 
 ## Project Structure
