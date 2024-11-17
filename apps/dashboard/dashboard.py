@@ -1,51 +1,111 @@
+import requests
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# Header
-st.title("GroovyBytes Dashboard Prototype")
-st.subheader("Data Overview and Visualizations")
+from flask import Flask, request, jsonify
+from threading import Thread
 
-# Sidebar for file upload
-st.sidebar.header("Data Upload")
-uploaded_file = st.sidebar.file_uploader("Upload a CSV or JSON file", type=['csv', 'json'])
+app = Flask(__name__)
+RECEIVED_DATA = None
 
-# Data Overview Section
-if uploaded_file is not None:
-    # Read data
-    if uploaded_file.name.endswith('.csv'):
-        data = pd.read_csv(uploaded_file)
-    else:
-        data = pd.read_json(uploaded_file)
+# Handle POST requests
+@app.route('/dashboard_api/data', methods=['POST'])
+def receive_data():
+    global RECEIVED_DATA
+    try:
+        RECEIVED_DATA = request.get_json()
+        return jsonify({"message": "Data recieved successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
     
-    # POST http://localhost:4321/api/upload `FormData` (refer to https://github.com/okikio-school/groovybytes/blob/2ae687e095cc301a1ff63eadae69b0ab21027063/apps/api/src/components/FileUploader.tsx#L57-L65)
+
+# handle GET requests (for debugging)
+@app.route('/dashboard_api/data', methods=['GET'])
+def get_data():
+    global RECEIVED_DATA
+    if RECEIVED_DATA:
+        return jsonify(RECEIVED_DATA), 200
+    else:
+        return jsonify({"message": "No data available"}), 404
+
+
+# start flask in separate thread
+def start_flask():
+    app.run(port=8502, debug=False, use_reloader=False)
+
+
+# fetch processed data from global variable
+def fetch_formatted_data():
+    global RECEIVED_DATA
+    try:
+        if RECEIVED_DATA is not None:
+            st.success("Data Recieved Successfully!")
+            return pd.DataFrame(RECEIVED_DATA)
+        else:
+            st.info("Waiting for data from the analysis engine...")
+            return None
+    except Exception as e:
+        st.error(f"Failed to fetch data: {e}")
+        return None
+
+
+# Display Data Overview
+def display_data_overview(data):
     st.write("### Data Overview")
     st.write(f"Total Records: {len(data)}")
     st.write(f"Columns: {', '.join(data.columns)}")
-
-    # Show a snippet of the data
     st.write("### Sample Data")
     st.write(data.head())
 
-    # Basic Visualization
+# Visualize data
+def visualize_data(data):
     st.write("### Data Visualization")
     column_to_plot = st.selectbox("Choose a column to visualize", data.columns)
     if column_to_plot:
-        fig = px.histogram(data, x=column_to_plot)
+        fig = px.bar(data, x=column_to_plot)
         st.plotly_chart(fig)
 
-    # Query Input Section
-    st.write("### Custom Query")
-    query_column = st.selectbox("Choose column to filter", data.columns)
-    query_value = st.text_input("Enter value to filter by")
-    if query_column and query_value:
-        filtered_data = data[data[query_column] == query_value]
-        st.write("Filtered Data")
-        st.write(filtered_data)
+# MAIN
+def main():
+    st.title("GroovyBytes Dashboard PWAPI")
+    st.subheader("Data Overview and Visualizations")
 
-else:
-    st.write("Please upload a data file to proceed.")
+    st.sidebar.header("Upload Data")
+    uploaded_file = st.sidebar.file_uploader("Upload CSV, JSON, XLS, XLSX file", type=['csv', 'json', 'xls', 'xlsx'])
 
-# Notifications Panel
-st.sidebar.header("Notifications")
-st.sidebar.write("No new notifications.")
+    # Flag to control when to fetch formatted data
+    data_ready_to_fetch = False
+
+    if uploaded_file is not None:
+        # Upload to ingestion system
+        st.info("Uploading to ingestion system...")
+        files = {'file': (uploaded_file.name, uploaded_file.getvalue())}
+        response = requests.post("http://127.0.0.1:5000/ingestion/upload", files=files)
+
+        if response.status_code == 200:
+            st.success("File successfully sent to ingestion system.")
+            data_ready_to_fetch = True
+        else:
+            st.error(f"Ingestion system error: {response.text}")
+
+
+    # Fetch data from analysis engine
+    if data_ready_to_fetch:
+        data = fetch_formatted_data()
+
+        if data is not None:
+            display_data_overview(data)
+            visualize_data(data)
+        else: st.warning("No data received yet. Please wait...")
+    
+    # TODO: Notifications panel integration with communication layer
+    st.sidebar.header("Notifications")
+    st.sidebar.write("No new notifications.")
+
+
+if __name__ == "__main__":
+    flask_thread = Thread(target=start_flask, daemon=True)
+    flask_thread.start()
+
+    main()
