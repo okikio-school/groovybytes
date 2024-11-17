@@ -117,12 +117,22 @@ The project is organized into several directories, each serving a specific purpo
 
 ## Steps to Deploy:
 
-1. **Run Pulsar Setup**: Use the following command to start Pulsar:
-   ```sh
-   bash systems/events/setup-pulsar.sh
+1. **Change Directory**: Navigate to the `systems/events` directory:
+  ```sh
+  cd systems/events
+  ```
+
+2. **Run Docker Compose**: Use the following command to start the services (and initialize the tenants/namespaces/topics):
+  ```sh
+  docker-compose up -d
+  ```
+
+3. **Run Pulsar Setup**: Use the following command to start Pulsar:
+  ```sh
+   bash ./setup-pulsar.sh
    ```
 
-3. **Initialize Superuser**: After the containers are running, initialize the superuser using the following commands:
+4. **Initialize Superuser**: After the containers are running, initialize the superuser using the following commands:
    ```sh
    CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
    curl -H "X-XSRF-TOKEN: $CSRF_TOKEN" \
@@ -140,12 +150,12 @@ This configuration ensures all required ports are mapped and the containers are 
 
 To learn more about the event system, refer to the [Events System README](systems/events/README.md).
 
-### Running the Dashboard
+### Running the API
 
-To start the Astro demo dashboard:
+To start the Astro demo api:
 
 ```sh
-pnpm --filter dashboard dev
+pnpm --filter api dev
 ```
 
 ### Handling Data Source Formats

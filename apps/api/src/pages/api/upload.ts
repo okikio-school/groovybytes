@@ -102,8 +102,6 @@ export const POST: APIRoute = async ({ request }) => {
           },
         };
 
-
-
         console.log(`Detected format: ${format}`);
         console.log('Message:', message);
 

@@ -18,7 +18,7 @@ if uploaded_file is not None:
     else:
         data = pd.read_json(uploaded_file)
     
-    # POST http://localhost:4321/api/upload `FormData` (refer to https://gitkraken.dev/link/dnNjb2RlOi8vZWFtb2Rpby5naXRsZW5zL2xpbmsvci83YzBlMWFkMDJkMWZjZDhiNjk2NzI0MDFjMjA5MGRlNjhhNGM4YmIzL2YvYXBwcy9hcGkvc3JjL2NvbXBvbmVudHMvRmlsZVVwbG9hZGVyLnRzeD91cmw9aHR0cHMlM0ElMkYlMkZnaXRodWIuY29tJTJGb2tpa2lvLXNjaG9vbCUyRmdyb292eWJ5dGVzLmdpdCZsaW5lcz01Ny02NQ%3D%3D?origin=gitlens)
+    # POST http://localhost:4321/api/upload `FormData` (refer to https://github.com/okikio-school/groovybytes/blob/2ae687e095cc301a1ff63eadae69b0ab21027063/apps/api/src/components/FileUploader.tsx#L57-L65)
     st.write("### Data Overview")
     st.write(f"Total Records: {len(data)}")
     st.write(f"Columns: {', '.join(data.columns)}")

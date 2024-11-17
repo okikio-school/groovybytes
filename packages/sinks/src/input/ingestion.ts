@@ -1,8 +1,29 @@
 // src/utils/inputSink.ts
-import { PulsarContext, sendData } from '../ctx.ts';
+import { PulsarContext, sendData, receiveDataIterator } from '../ctx.ts';
 import { parse } from '@std/csv';
 import { encodeBase64 } from '@std/encoding';
 import { MessageSchema } from '@groovybytes/schema/src/index.ts';
+
+// adapt import to the targeted JS runtime
+import {
+  availableParallelism,
+  FixedThreadPool,
+  PoolEvents,
+} from '@poolifier/poolifier-web-worker'
+
+// a fixed web worker pool
+const pool = new FixedThreadPool(
+  availableParallelism(),
+  new URL('./workers/_worker.ts', import.meta.url),
+  {
+    errorEventHandler: (e) => {
+      console.error(e)
+    },
+    workerOptions: {
+      type: "module",
+    }
+  },
+);
 
 // Utility to send data to a Python process via HTTP
 async function sendToPython(payload: any): Promise<void> {
