@@ -19,7 +19,7 @@ fi
 
 # Start Pulsar in the background using the absolute path
 echo "Starting Pulsar..."
-nohup "${PULSAR_DIR}/bin/pulsar" standalone > pulsar.log 2>&1 &
+nohup "${PULSAR_DIR}/bin/pulsar-daemon" start standalone > pulsar.log 2>&1 &
 
 # Get the PID of the Pulsar process
 PULSAR_PID=$!

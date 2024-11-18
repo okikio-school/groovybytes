@@ -35,7 +35,7 @@ Ensure you have the following installed:
 
 ### Install dependencies:
   Install the project dependencies using `pnpm`:
-  
+
   ```sh
   pnpm install -r
   ```
@@ -43,7 +43,7 @@ Ensure you have the following installed:
 ## Steps to Deploy:
 
   ```sh
-  pnpm -r start
+  pnpm start
   ```
 
 ## Project Structure

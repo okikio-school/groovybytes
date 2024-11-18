@@ -4,13 +4,14 @@
 PULSAR_VERSION="4.0.0"
 PULSAR_DIR="apache-pulsar-${PULSAR_VERSION}"
 
+# Cache existing namespaces
+existing_namespaces=$("${PULSAR_DIR}/bin/pulsar-admin" namespaces list public)
+
 # Function to check if a namespace exists
 namespace_exists() {
   local namespace=$1
   local tenant=${namespace%%/*}
   local namespace_name=${namespace#*/}
-
-  existing_namespaces=$("${PULSAR_DIR}/bin/pulsar-admin" namespaces list "$tenant")
   if echo "$existing_namespaces" | grep -w "$namespace" > /dev/null; then
     return 0  # Namespace exists
   else
@@ -18,14 +19,21 @@ namespace_exists() {
   fi
 }
 
+# Cache existing topics per namespace
+declare -A existing_topics_cache
+
 # Function to check if a topic exists
 topic_exists() {
   local namespace=$1
   local topic=$2
   local full_topic="persistent://${namespace}/${topic}"
 
-  existing_topics=$("${PULSAR_DIR}/bin/pulsar-admin" topics list "$namespace")
-  if echo "$existing_topics" | grep -w "$full_topic" > /dev/null; then
+  # Check if topics for this namespace are already cached
+  if [[ -z "${existing_topics_cache[$namespace]}" ]]; then
+    existing_topics_cache[$namespace]=$("${PULSAR_DIR}/bin/pulsar-admin" topics list "$namespace")
+  fi
+
+  if echo "${existing_topics_cache[$namespace]}" | grep -w "$full_topic" > /dev/null; then
     return 0  # Topic exists
   else
     return 1  # Topic does not exist
@@ -83,7 +91,7 @@ non_partitioned_topics=(
 echo "Creating non-partitioned topics..."
 for full_topic in "${non_partitioned_topics[@]}"; do
   namespace=${full_topic%/*}
-  topic=${full_topic#*/}
+  topic=${full_topic##*/}  # Corrected line
 
   if topic_exists "$namespace" "$topic"; then
     echo "Topic $namespace/$topic already exists. Skipping creation."
