@@ -4,7 +4,8 @@
     "devbox@latest",
     "fnm@latest",
     "python@latest",
-    "jdk@17"
+    "jdk@17",
+    "pnpm@latest"
   ],
   "shell": {
     "init_hook": [

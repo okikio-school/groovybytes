@@ -133,6 +133,54 @@
         }
       }
     },
+    "pnpm@latest": {
+      "last_modified": "2024-11-03T14:18:04Z",
+      "resolved": "github:NixOS/nixpkgs/4ae2e647537bcdbb82265469442713d066675275#pnpm",
+      "source": "devbox-search",
+      "version": "9.12.3",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jnfsa8swb9f5ac3s1mc0pnq6zjr69i0b-pnpm-9.12.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/jnfsa8swb9f5ac3s1mc0pnq6zjr69i0b-pnpm-9.12.3"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/cxqr84mgwxp3c5ns9smi1ylc24q5r4pf-pnpm-9.12.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/cxqr84mgwxp3c5ns9smi1ylc24q5r4pf-pnpm-9.12.3"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/zigjwhgz3w2n63dqcpfxiz1abgf1vj3l-pnpm-9.12.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/zigjwhgz3w2n63dqcpfxiz1abgf1vj3l-pnpm-9.12.3"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/lw6676szir9gwzh4l9qmbnh2w8v84glg-pnpm-9.12.3",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/lw6676szir9gwzh4l9qmbnh2w8v84glg-pnpm-9.12.3"
+        }
+      }
+    },
     "python@latest": {
       "last_modified": "2024-11-03T14:18:04Z",
       "plugin_version": "0.0.4",
