@@ -31,7 +31,21 @@ Ensure you have the following installed:
 - [Node.js](https://nodejs.org/) (version specified in `.nvmrc`)
 - [pnpm](https://pnpm.io/installation)
 - [python](https://www.python.org/)
+- [openjdk-17](https://openjdk.org/projects/jdk/17/)
 - [Docker](https://docs.docker.com/get-docker/)
+
+### Install dependencies:
+  Install the project dependencies using `pnpm`:
+
+  ```sh
+  pnpm install -r
+  ```
+
+## Steps to Deploy:
+
+  ```sh
+  pnpm -r start
+  ```
 
 ## Project Structure
 
@@ -114,49 +128,6 @@ The project is organized into several directories, each serving a specific purpo
 - **tsup.config.ts**: Configuration file for tsup, a TypeScript bundler.
 
 > **Note**: The project structure is subject to change as the project evolves. In addition, I've excluded files and directories that are not relevant to the project setup.
-
-## Steps to Deploy:
-
-1. **Change Directory**: Navigate to the `systems/events` directory:
-  ```sh
-  cd systems/events
-  ```
-
-2. **Run Docker Compose**: Use the following command to start the services (and initialize the tenants/namespaces/topics):
-  ```sh
-  docker-compose up -d
-  ```
-
-3. **Run Pulsar Setup**: Use the following command to start Pulsar:
-  ```sh
-   bash ./setup-pulsar.sh
-   ```
-
-4. **Initialize Superuser**: After the containers are running, initialize the superuser using the following commands:
-   ```sh
-   CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
-   curl -H "X-XSRF-TOKEN: $CSRF_TOKEN" \
-        -H "Cookie: XSRF-TOKEN=$CSRF_TOKEN;" \
-        -H "Content-Type: application/json" \
-        -X PUT http://localhost:7750/pulsar-manager/users/superuser \
-        -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
-   ```
-
-You can then access the Pulsar Manager web UI at `http://localhost:9527` using the default credentials:  
-- **Username**: `admin`  
-- **Password**: `apachepulsar`
-
-This configuration ensures all required ports are mapped and the containers are linked for intercommunication.
-
-To learn more about the event system, refer to the [Events System README](systems/events/README.md).
-
-### Running the API
-
-To start the Astro demo api:
-
-```sh
-pnpm --filter api dev
-```
 
 ### Handling Data Source Formats
 
