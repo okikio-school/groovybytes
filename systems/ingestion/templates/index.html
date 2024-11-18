@@ -44,7 +44,7 @@
         <h2 class="mt-4">Input Sink</h2>
         
         
-        <form id="uploadForm" class="form-inline mb-4" style="flex-flow: row; align-items: center;" action="/upload" method="post" enctype="multipart/form-data">
+        <form id="uploadForm" class="form-inline mb-4" style="flex-flow: row; align-items: center;" action="/ingestion/upload" method="post" enctype="multipart/form-data">
             <div class="form-group mr-4" style="width: 370px;">
                 <label for="file" class="mr-2">Choose file:</label>
                 <input type="file" class="form-control-file" id="file" name="file" required>
@@ -79,7 +79,7 @@
             var formData = new FormData(this);
 
             $.ajax({
-                url: '/upload',
+                url: '/ingestion/upload',
                 type: 'POST',
                 data: formData,
                 contentType: false,

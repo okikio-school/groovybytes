@@ -1,2 +1,6 @@
 {
+    "CSV_Sample_1_3MB.csv": "processed",
+    "CSV_Sample_27KB.csv": "processed",
+    "CSV_Sample_167KB.csv": "processed",
+    "XLS_Sample_19KB.xls": "error"
 }
