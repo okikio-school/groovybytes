@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 # Set variables
 PULSAR_VERSION="4.0.0"
 PULSAR_DIR="apache-pulsar-${PULSAR_VERSION}"
