@@ -6,15 +6,10 @@
 
 2. **Run Docker Compose**: Use the following command to start the services (and initialize the tenants/namespaces/topics):
 
-   ```sh
-   bash setup-pulsar.sh
-   ```
-
-   Or Manually
-
-   ```sh
-   docker-compose up -d
-   ```
+  ```sh
+    docker-compose down
+    bash setup-pulsar.sh
+  ```
 
 3. **Initialize Superuser**: After the containers are running, initialize the superuser using the following commands:
 
@@ -177,4 +172,9 @@ const jsonMessage = {
     "priority": "high" // (Optional) Priority level of the message (e.g., low, normal, high, critical)
   }
 };
+```
+
+```
+docker exec -it broker $(cat ./setup-topics.sh)
+
 ```

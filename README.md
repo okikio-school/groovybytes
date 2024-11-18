@@ -20,7 +20,7 @@ To set up the project locally, follow the steps below:
 
 DevBox is a tool that provides a consistent development environment for the project. It is recommended to use DevBox to set up the project locally. To install DevBox, run the following commands:
 
-```sh
+```
 curl -fsSL https://get.jetify.com/devbox | bash
 devbox shell
 ```

@@ -22,7 +22,7 @@ async function runOutputSink() {
   }
 }
 
-async function runSystem(pyFilePath = 'main.py') {
+async function runSystem(pyFilePath = 'app.py') {
   try {
     console.log(`Running Python System: ${pyFilePath}`);
     const { stdout } = await execa('python', [pyFilePath]);

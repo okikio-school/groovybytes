@@ -138,3 +138,8 @@ dist
 
 # jetbrains setting folder
 .idea/
+
+apache-pulsar-4.0.0-bin.tar.gz
+apache-pulsar-4.0.0/
+
+__pycache__/

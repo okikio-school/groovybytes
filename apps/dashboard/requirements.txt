@@ -7,3 +7,5 @@ rapidfuzz~=3.10.1
 xlrd
 Werkzeug~=3.1.3
 rapidfuzz~=3.10.1
+streamlit~=1.40.1
+plotly~=5.24.1

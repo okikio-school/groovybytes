@@ -3,7 +3,8 @@
   "packages": [
     "devbox@latest",
     "fnm@latest",
-    "python@latest"
+    "python@latest",
+    "jdk@17"
   ],
   "shell": {
     "init_hook": [

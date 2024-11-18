@@ -103,7 +103,7 @@ export const POST: APIRoute = async ({ request }) => {
         };
 
         console.log(`Detected format: ${format}`);
-        console.log('Message:', message);
+        console.log('(Upload) Message:', message);
 
         // Validate the message against the schema
         const validationResult = MessageSchema.safeParse(message);

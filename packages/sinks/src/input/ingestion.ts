@@ -27,7 +27,7 @@ export async function runIngestionInputSink() {
       continue;
     }
 
-    console.log('Received data:', data);
+    console.log('(Ingestion Input Sink) Received data:', data);
 
     const payload = decodeBase64((message.payload as InferSchema<typeof BinaryPayloadSchema>).data);
     const blob = new Blob([payload], { type: message.meta.fileType });

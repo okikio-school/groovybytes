@@ -5,7 +5,7 @@
   "description": "",
   "access": "public",
   "scripts": {
-    "start": "./setup-pulsar.sh"
+    "start": "chmod +x ./install-pulsar.sh && ./install-pulsar.sh"
   },
   "keywords": [],
   "author": "",

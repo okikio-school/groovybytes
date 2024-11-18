@@ -97,6 +97,42 @@
         }
       }
     },
+    "jdk@17": {
+      "last_modified": "2024-11-03T14:18:04Z",
+      "resolved": "github:NixOS/nixpkgs/4ae2e647537bcdbb82265469442713d066675275#jdk17",
+      "source": "devbox-search",
+      "version": "17.0.12+7",
+      "systems": {
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/9b6v3yni3s7785xq1xshqjs25hmdwhr6-openjdk-17.0.12+7",
+              "default": true
+            },
+            {
+              "name": "debug",
+              "path": "/nix/store/wyj0kpfr2wm9ii65njjh7nq6pxvq5nqk-openjdk-17.0.12+7-debug"
+            }
+          ],
+          "store_path": "/nix/store/9b6v3yni3s7785xq1xshqjs25hmdwhr6-openjdk-17.0.12+7"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/27csmcaag2l3k9pki2y74il2bczkv4v7-openjdk-17.0.12+7",
+              "default": true
+            },
+            {
+              "name": "debug",
+              "path": "/nix/store/dfq1jhdcdkmfls4w85f1v208ihi3wmnf-openjdk-17.0.12+7-debug"
+            }
+          ],
+          "store_path": "/nix/store/27csmcaag2l3k9pki2y74il2bczkv4v7-openjdk-17.0.12+7"
+        }
+      }
+    },
     "python@latest": {
       "last_modified": "2024-11-03T14:18:04Z",
       "plugin_version": "0.0.4",

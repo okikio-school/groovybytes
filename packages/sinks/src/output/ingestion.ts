@@ -47,6 +47,7 @@ export async function runIngestionOutputSink(port = 5003) {
           },
         };
 
+        console.log('(Ingestion Output Sink) Sending data:', message);
         return await Promise.all([
           sendData(ctx, topic, message),
         ]);

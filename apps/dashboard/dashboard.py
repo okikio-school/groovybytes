@@ -32,7 +32,7 @@ def get_data():
 
 # start flask in separate thread
 def start_flask():
-    app.run(port=8502, debug=False, use_reloader=False)
+    app.run(port=8503, debug=False, use_reloader=False)
 
 
 # fetch processed data from global variable

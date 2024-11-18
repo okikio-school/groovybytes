@@ -20,7 +20,7 @@ export async function runFormattingInputSink() {
       continue;
     }
 
-    console.log('Received data:', data);
+    console.log('(Formatting Input Sink) Received data:', data);
 
     const payload = (message.payload as InferSchema<typeof BinaryPayloadSchema>).data;
     await sendToPython("json", payload);
