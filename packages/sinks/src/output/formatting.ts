@@ -1,9 +1,10 @@
 // src/utils/outputSink.ts
 import { PulsarContext, sendData } from '../ctx.ts';
-import { MessageSchema, type InferSchema } from '@groovybytes/schema/src/index.ts';
+import { JsonPayloadSchema, MessageSchema, type InferSchema } from '@groovybytes/schema/src/index.ts';
 
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import { sendToPython } from '../utils.ts';
 
 export async function runFormattingOutputSink(port = 5004) {
   const ctx = new PulsarContext();
@@ -18,11 +19,10 @@ export async function runFormattingOutputSink(port = 5004) {
   app.get('/', (c) => c.text('Hono!'))
   app.post('/upload', async (c) => {
     const data = (await c.req.json());
-    const payload = { data };
+    const payload = data;
 
     await Promise.all(
       topics.map(async (topic) => {
-
         // Generate a unique message ID
         const messageId = crypto.randomUUID();
 
@@ -40,17 +40,18 @@ export async function runFormattingOutputSink(port = 5004) {
           meta: {
             traceIds: [messageId],
             source: {
-              format,
+              format: "json",
               sourceType: 'filesystem',
-              sourceId: file.name,
             },
-            fileName: file.name,
-            fileType: file.type,
-            fileSize: file.size,
           },
         };
 
-        return await sendData(ctx, topic, message);
+        return await Promise.all([
+          topic === topics[topics.length - 1] ?
+            sendToPython("json", (message.payload as InferSchema<typeof JsonPayloadSchema>).data) :
+            Promise.resolve(null),
+          sendData(ctx, topic, message),
+        ]);
       })
     )
     c.json({ message: 'File uploaded successfully' })

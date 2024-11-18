@@ -1,15 +1,32 @@
 // src/utils/inputSink.ts
-import { PulsarContext, sendData } from './ctx.ts';
-import { parse } from '@std/csv';
-import { encodeBase64 } from '@std/encoding';
+import type { JsonType } from '@groovybytes/schema/src/utils.ts';
 import { MessageSchema } from '@groovybytes/schema/src/index.ts';
 
+import { PulsarContext, sendData } from './ctx.ts';
+import { encodeBase64 } from '@std/encoding';
+import { parse } from '@std/csv';
+
+interface SendToPythonOptions {
+  pythonUrl?: string;
+}
+
 // Utility to send data to a Python process via HTTP
-export async function sendToPython(payload: File): Promise<void> {
-  const pythonUrl = 'http://localhost:5000/upload'; // Python server endpoint
+export async function sendToPython(type: 'file', payload: File, opts?: SendToPythonOptions): Promise<void>;
+export async function sendToPython(type: 'json', payload: JsonType, opts?: SendToPythonOptions): Promise<void>;
+export async function sendToPython(type: "file" | "json", payload: File | JsonType, opts: SendToPythonOptions = {}): Promise<void> {
+  const pythonUrl = opts.pythonUrl ?? 'http://localhost:5000/upload'; // Python server endpoint
   try {
     const formData = new FormData();
-    formData.append('file', payload);
+    if (type === "file") formData.append('file', payload as File);
+
+    const fetchOpts = type === "file" ? {
+      method: 'POST',
+      body: formData,
+    } : {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }
 
     const response = await fetch(pythonUrl, {
       method: 'POST',

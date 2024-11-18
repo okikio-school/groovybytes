@@ -1,9 +1,10 @@
 // src/utils/outputSink.ts
+import type { JsonPayloadSchema, MessageSchema, InferSchema } from '@groovybytes/schema/src/index.ts';
 import { PulsarContext, sendData } from '../ctx.ts';
-import { MessageSchema, type InferSchema } from '@groovybytes/schema/src/index.ts';
 
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
+import { sendToPython } from '../utils.ts';
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
 
 export async function runIngestionOutputSink(port = 5003) {
   const ctx = new PulsarContext();
@@ -40,17 +41,15 @@ export async function runIngestionOutputSink(port = 5003) {
           meta: {
             traceIds: [messageId],
             source: {
-              format,
+              format: "json",
               sourceType: 'filesystem',
-              sourceId: file.name,
             },
-            fileName: file.name,
-            fileType: file.type,
-            fileSize: file.size,
           },
         };
 
-        return await sendData(ctx, topic, message);
+        return await Promise.all([
+          sendData(ctx, topic, message),
+        ]);
       })
     )
     c.json({ message: 'File uploaded successfully' })
