@@ -19,8 +19,6 @@ echo "Starting Pulsar with Docker Compose..."
 docker-compose down
 docker-compose up -d
 
-sleep 20
-
 # Check if Pulsar is ready
 function is_pulsar_ready {
   curl -s "${PULSAR_ADMIN_URL}/clusters" > /dev/null
@@ -28,6 +26,8 @@ function is_pulsar_ready {
 }
 
 echo "Waiting for Pulsar to be ready..."
+sleep 20
+
 while ! is_pulsar_ready; do
   echo "Pulsar is not ready yet. Retrying in 5 seconds..."
   sleep 5
@@ -51,9 +51,6 @@ for namespace in "${!NAMESPACES_TOPICS[@]}"; do
 done
 
 
-sleep 
-
-
 # Check if Pulsar is ready
 function is_pulsar_manager_ready {
   curl -s "${PULSAR_CSRF_URL}" > /dev/null
@@ -61,6 +58,8 @@ function is_pulsar_manager_ready {
 }
 
 echo "Waiting for Pulsar Manager to be ready..."
+
+sleep 20
 while ! is_pulsar_manager_ready; do
   echo "Pulsar Manager is not ready yet. Retrying in 5 seconds..."
   sleep 5
