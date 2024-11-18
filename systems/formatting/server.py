@@ -43,7 +43,7 @@ class Sink:
         count = 0
         print("\nSending formatted data...")
 
-        while not self.is_empty() and count < self.MAX_ITEM_COUNT:
+        while not self.is_empty():
             item = self.q.get()
             out_data.append(item)
             count += 1

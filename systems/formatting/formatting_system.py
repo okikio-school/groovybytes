@@ -67,12 +67,6 @@ class FormattingSystem:
             headers.append(key)
         return headers
 
-    # @staticmethod
-    # def standardize_dates():
-    #     print(f'Standardizing dates')
-    # @staticmethod
-    # def standardize_numbers():
-    #     print(f'Standardize numbers')
 
 
 
