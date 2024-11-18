@@ -2,14 +2,16 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
   "packages": [
     "devbox@latest",
-    "fnm@latest",
     "python@latest",
     "jdk@17",
-    "pnpm@latest"
+    "pnpm@latest",
+    "streamlit@latest",
+    "nodejs@latest"
   ],
   "shell": {
     "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
+      "echo 'Welcome to devbox!' > /dev/null",
+      ". $VENV_DIR/bin/activate"
     ],
     "scripts": {
       "test": [

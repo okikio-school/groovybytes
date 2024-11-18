@@ -20,7 +20,7 @@ To set up the project locally, follow the steps below:
 
 DevBox is a tool that provides a consistent development environment for the project. It is recommended to use DevBox to set up the project locally. To install DevBox, run the following commands:
 
-```
+```sh
 curl -fsSL https://get.jetify.com/devbox | bash
 devbox shell
 ```
@@ -32,11 +32,10 @@ Ensure you have the following installed:
 - [pnpm](https://pnpm.io/installation)
 - [python](https://www.python.org/)
 - [openjdk-17](https://openjdk.org/projects/jdk/17/)
-- [Docker](https://docs.docker.com/get-docker/)
 
 ### Install dependencies:
   Install the project dependencies using `pnpm`:
-
+  
   ```sh
   pnpm install -r
   ```

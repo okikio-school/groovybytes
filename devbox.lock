@@ -49,54 +49,6 @@
         }
       }
     },
-    "fnm@latest": {
-      "last_modified": "2024-11-03T14:18:04Z",
-      "resolved": "github:NixOS/nixpkgs/4ae2e647537bcdbb82265469442713d066675275#fnm",
-      "source": "devbox-search",
-      "version": "1.37.2",
-      "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/93lbng6sacbjl9l62zipkach51cppkcr-fnm-1.37.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/93lbng6sacbjl9l62zipkach51cppkcr-fnm-1.37.2"
-        },
-        "aarch64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/01s4s1smj9kcl3k7bsgimjmd1mpqjf4p-fnm-1.37.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/01s4s1smj9kcl3k7bsgimjmd1mpqjf4p-fnm-1.37.2"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/wd2jh2941kbcxf8373912n9wnpc17gkq-fnm-1.37.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/wd2jh2941kbcxf8373912n9wnpc17gkq-fnm-1.37.2"
-        },
-        "x86_64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/5mkwm3kp2b3fhl95rl9dsmarhhb8czys-fnm-1.37.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/5mkwm3kp2b3fhl95rl9dsmarhhb8czys-fnm-1.37.2"
-        }
-      }
-    },
     "jdk@17": {
       "last_modified": "2024-11-03T14:18:04Z",
       "resolved": "github:NixOS/nixpkgs/4ae2e647537bcdbb82265469442713d066675275#jdk17",
@@ -130,6 +82,71 @@
             }
           ],
           "store_path": "/nix/store/27csmcaag2l3k9pki2y74il2bczkv4v7-openjdk-17.0.12+7"
+        }
+      }
+    },
+    "nodejs@latest": {
+      "last_modified": "2024-11-03T14:18:04Z",
+      "plugin_version": "0.0.2",
+      "resolved": "github:NixOS/nixpkgs/4ae2e647537bcdbb82265469442713d066675275#nodejs_23",
+      "source": "devbox-search",
+      "version": "23.1.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ly01l9cc6lxyzfwf60k0fhxrfsbzxgvi-nodejs-23.1.0",
+              "default": true
+            },
+            {
+              "name": "libv8",
+              "path": "/nix/store/329kf3k7s5xldqm1hbb3hqhq41qqch0d-nodejs-23.1.0-libv8"
+            }
+          ],
+          "store_path": "/nix/store/ly01l9cc6lxyzfwf60k0fhxrfsbzxgvi-nodejs-23.1.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/0n7dihyccg34km0x1j39njx9kkc3v1lw-nodejs-23.1.0",
+              "default": true
+            },
+            {
+              "name": "libv8",
+              "path": "/nix/store/ql540hc7qy2idfmv5jrf0vg8kisq6b40-nodejs-23.1.0-libv8"
+            }
+          ],
+          "store_path": "/nix/store/0n7dihyccg34km0x1j39njx9kkc3v1lw-nodejs-23.1.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rn9a7zgmlsg4c6jzdyslwj0hapgjlkpw-nodejs-23.1.0",
+              "default": true
+            },
+            {
+              "name": "libv8",
+              "path": "/nix/store/gr0zyx9kdmj62f8kaw6h2g9k6iypin3l-nodejs-23.1.0-libv8"
+            }
+          ],
+          "store_path": "/nix/store/rn9a7zgmlsg4c6jzdyslwj0hapgjlkpw-nodejs-23.1.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/bc1blqcb391vjj251had3dbrnq5rb7md-nodejs-23.1.0",
+              "default": true
+            },
+            {
+              "name": "libv8",
+              "path": "/nix/store/ba7nrcdqp8b6mk1lfc15gz4s97jwk2sc-nodejs-23.1.0-libv8"
+            }
+          ],
+          "store_path": "/nix/store/bc1blqcb391vjj251had3dbrnq5rb7md-nodejs-23.1.0"
         }
       }
     },
@@ -235,6 +252,70 @@
             }
           ],
           "store_path": "/nix/store/b5w6mr7v3mnl9s163yimdksddnwhvqyl-python3-3.13.0"
+        }
+      }
+    },
+    "streamlit@latest": {
+      "last_modified": "2024-11-07T05:50:23Z",
+      "resolved": "github:NixOS/nixpkgs/85f7e662eda4fa3a995556527c87b2524b691933#streamlit",
+      "source": "devbox-search",
+      "version": "1.39.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/whdd06ry3bbxx3b0zys7qrlqsnbyi8ch-python3.12-streamlit-1.39.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/323cy8jdrmi2lih0774av8g962slbzbk-python3.12-streamlit-1.39.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/whdd06ry3bbxx3b0zys7qrlqsnbyi8ch-python3.12-streamlit-1.39.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8mj3v2h5pszp886f2cidbfy2qxxvdsj9-python3.12-streamlit-1.39.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/xxw252lris4hc3v522z8lyj7w2qi3ws2-python3.12-streamlit-1.39.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/8mj3v2h5pszp886f2cidbfy2qxxvdsj9-python3.12-streamlit-1.39.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/p17qz07wjjya5hxi9fav90kb7va48pfl-python3.12-streamlit-1.39.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/hqsa8l2j2n4y4agvw73scwr6cbx6657h-python3.12-streamlit-1.39.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/p17qz07wjjya5hxi9fav90kb7va48pfl-python3.12-streamlit-1.39.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rdlhh016hmqw8nnmq69wgby9igj7w50k-python3.12-streamlit-1.39.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/z2p88vviam28zibcj57almm4rypgr8r7-python3.12-streamlit-1.39.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/rdlhh016hmqw8nnmq69wgby9igj7w50k-python3.12-streamlit-1.39.0"
         }
       }
     }
