@@ -119,6 +119,8 @@ export async function sendData(context: PulsarContext, topic: string, data: any)
     data: new TextEncoder().encode(JSON.stringify(data)),
   });
 
+  await producer.flush(); // Ensure the message is sent before continuing
+
   // Log that the data was successfully sent
   console.log(`Sent data to topic: ${topic}`);
 }
@@ -152,18 +154,27 @@ export async function* receiveDataIterator<T>(
   const consumer = await context.getConsumer(topic, subscription);
 
   try {
+    console.log(`Listening for messages on topic: ${topic}`);
+
     while (true) {
       // Receive a message from the consumer
       const msg = await consumer.receive();
 
-      // Parse the message data from the received message
-      const data = JSON.parse(msg.getData().toString());
+      try {
+        const unstructuredData = msg.getData().toString();
+        console.log(`Received message: ${unstructuredData}`);
 
-      // Yield the parsed data to the iterator consumer
-      yield data;
+        // Parse the message data from the received message
+        const data = JSON.parse(unstructuredData);
+
+        // Yield the parsed data to the iterator consumer
+        yield data;
+      } catch (error) {
+        console.error("Error parsing data:", error);
+      }
 
       // Acknowledge the message to indicate successful processing
-      consumer.acknowledge(msg);
+      await consumer.acknowledge(msg);
     }
   } catch (error) {
     console.error("Error receiving data:", error);

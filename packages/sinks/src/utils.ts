@@ -14,7 +14,7 @@ interface SendToPythonOptions {
 export async function sendToPython(type: 'file', payload: File, opts?: SendToPythonOptions): Promise<void>;
 export async function sendToPython(type: 'json', payload: JsonType, opts?: SendToPythonOptions): Promise<void>;
 export async function sendToPython(type: "file" | "json", payload: File | JsonType, opts: SendToPythonOptions = {}): Promise<void> {
-  const pythonUrl = opts.pythonUrl ?? 'http://localhost:5000/upload'; // Python server endpoint
+  const pythonUrl = opts.pythonUrl ?? 'http://localhost:5000/ingestion/upload'; // Python server endpoint
   try {
     const formData = new FormData();
     if (type === "file") formData.append('file', payload as File);

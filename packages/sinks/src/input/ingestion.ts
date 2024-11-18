@@ -8,14 +8,20 @@ export async function runIngestionInputSink() {
   const ctx = new PulsarContext();
 
   const formats = ['json', 'csv', 'xml', 'binary', 'text'];
-  const dataIter = interleaveIterators(
-    ...formats.map((fmt) => {
-      return receiveDataIterator(
-        ctx,
-        `persistent://public/ingestion/input.${fmt}`,
-        `ingestion-input-sink-${fmt}`
-      )
-    })
+  // const dataIter = interleaveIterators(
+  //   ...formats.map((fmt) => {
+  //     return receiveDataIterator(
+  //       ctx,
+  //       `persistent://public/ingestion/input.${fmt}`,
+  //       `ingestion-input-sink-${fmt}`
+  //     )
+  //   })
+  // );
+
+  const dataIter = receiveDataIterator(
+    ctx,
+    `persistent://public/ingestion/input.csv`,
+    `ingestion-input-sink-csv`
   );
 
   for await (const data of dataIter) {

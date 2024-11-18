@@ -23,7 +23,7 @@ export async function runFormattingInputSink() {
     console.log('(Formatting Input Sink) Received data:', data);
 
     const payload = (message.payload as InferSchema<typeof BinaryPayloadSchema>).data;
-    await sendToPython("json", payload);
+    await sendToPython("json", payload, {pythonUrl: 'http://localhost:5001/formatting/process'});
     // await sendData(ctx, data);
   }
 }

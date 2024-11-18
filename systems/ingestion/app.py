@@ -13,7 +13,7 @@ import datetime
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FILE = 'output_data.xlsx'
 HISTORY_FILE = 'upload_history.json'
-OUTPUT_URL = 'http://localhost:5001/formatting/process'
+OUTPUT_URL = 'http://localhost:5003/upload'
 ALLOWED_EXTENSIONS = {'csv', 'xls', 'xlsx', 'json'}
 file_queue = []
 file_status = {}

@@ -90,7 +90,7 @@ async def main():
         # Upload to ingestion system only after clicking the upload button
         st.info("Uploading to ingestion system...")
         files = {'file': (uploaded_file.name, uploaded_file.getvalue())}
-        response = requests.post("http://127.0.0.1:5000/ingestion/upload", files=files)
+        response = requests.post("http://127.0.0.1:4321/api/upload", files=files)
 
         if response.status_code == 200:
             st.success("File successfully sent to ingestion system.")

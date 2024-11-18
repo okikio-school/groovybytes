@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+# set -x
 
 # Set variables
 PULSAR_VERSION="4.0.0"

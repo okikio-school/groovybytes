@@ -20,6 +20,10 @@ export const POST: APIRoute = async ({ request }) => {
     // Parse the form data
     const formData = await request.formData();
 
+    console.log({
+      formData,
+    })
+
     // Initialize Pulsar context
     const pulsarContext = new PulsarContext(); // Ensure this is properly initialized
 

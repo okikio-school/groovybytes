@@ -6,7 +6,8 @@ from formatting_system import FormattingSystem
 from apscheduler.schedulers.background import BackgroundScheduler
 from rich.console import Console
 
-OUTPUT_URL = "http://localhost:8502/dashboard_api/data"
+# OUTPUT_URL = "http://localhost:8502/dashboard_api/data"
+OUTPUT_URL = "http://localhost:5024/upload"
 console = Console()
 
 app = Flask(__name__)

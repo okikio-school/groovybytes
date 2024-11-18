@@ -3,7 +3,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { sendToPython } from '../utils.ts';
 
-export async function runFormattingOutputSink(port = 5004) {
+export async function runFormattingOutputSink(port = 5024) {
   const app = new Hono()
 
   app.get('/', (c) => c.text('Hono!'))
