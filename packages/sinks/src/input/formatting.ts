@@ -22,10 +22,8 @@ export async function runFormattingInputSink() {
 
     console.log('Received data:', data);
 
-    const payload = decodeBase64((message.payload as InferSchema<typeof BinaryPayloadSchema>).data);
-    const blob = new Blob([payload], { type: message.meta.fileType });
-    const file = new File([blob], message.meta.fileName ?? "unknown-file", { type: message.meta.fileType });
-    await sendToPython(file);
+    const payload = (message.payload as InferSchema<typeof BinaryPayloadSchema>).data;
+    await sendToPython("json", payload);
     // await sendData(ctx, data);
   }
 }

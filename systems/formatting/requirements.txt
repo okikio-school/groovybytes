@@ -1,0 +1,7 @@
+flask~=3.0.3
+paho-mqtt~=2.1.0
+pandas~=2.2.3
+openpyxl~=3.1.5
+apscheduler~=3.10.4
+xlrd
+Werkzeug~=3.1.3

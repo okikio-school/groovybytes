@@ -2,6 +2,7 @@
 
 # Pulsar Admin REST API URL
 PULSAR_ADMIN_URL="http://localhost:8080/admin/v2"
+PULSAR_CSRF_URL="http://localhost:7750/pulsar-manager/csrf-token"
 
 # Namespaces and Topics
 declare -A NAMESPACES_TOPICS=(
@@ -15,7 +16,10 @@ declare -A NAMESPACES_TOPICS=(
 
 # Start Pulsar with Docker Compose
 echo "Starting Pulsar with Docker Compose..."
+docker-compose down
 docker-compose up -d
+
+sleep 20
 
 # Check if Pulsar is ready
 function is_pulsar_ready {
@@ -45,5 +49,46 @@ for namespace in "${!NAMESPACES_TOPICS[@]}"; do
       -d "$partitions"
   done
 done
+
+
+sleep 
+
+
+# Check if Pulsar is ready
+function is_pulsar_manager_ready {
+  curl -s "${PULSAR_CSRF_URL}" > /dev/null
+  return $?
+}
+
+echo "Waiting for Pulsar Manager to be ready..."
+while ! is_pulsar_manager_ready; do
+  echo "Pulsar Manager is not ready yet. Retrying in 5 seconds..."
+  sleep 5
+done
+
+echo "Creating Pulsar Manager superuser..."
+
+CSRF_TOKEN=$(curl "${PULSAR_CSRF_URL}")
+curl -H "X-XSRF-TOKEN: $CSRF_TOKEN" \
+    -H "Cookie: XSRF-TOKEN=$CSRF_TOKEN;" \
+    -H "Content-Type: application/json" \
+    -X PUT http://localhost:7750/pulsar-manager/users/superuser \
+    -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
+
+echo ""
+echo ""
+echo "Pulsar Manager superuser created!"
+echo "Pulsar Manager URL: http://localhost:9527/#/environments"
+echo ""
+
+echo "User: admin"
+echo "Password: apachepulsar"
+echo ""
+
+echo "New Environment"
+echo "Environment Name: standalone"
+echo "Service URL: http://pulsar-standalone:8080"
+echo "Bookie URL: http://pulsar-standalone:6650"
+echo ""
 
 echo "Pulsar setup complete!"

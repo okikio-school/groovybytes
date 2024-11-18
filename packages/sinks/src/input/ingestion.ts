@@ -32,7 +32,7 @@ export async function runIngestionInputSink() {
     const payload = decodeBase64((message.payload as InferSchema<typeof BinaryPayloadSchema>).data);
     const blob = new Blob([payload], { type: message.meta.fileType });
     const file = new File([blob], message.meta.fileName ?? "unknown-file", { type: message.meta.fileType });
-    await sendToPython(file);
+    await sendToPython("file", file);
     // await sendData(ctx, data);
   }
 }
