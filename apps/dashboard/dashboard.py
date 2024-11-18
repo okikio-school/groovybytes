@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore", message="missing ScriptRunContext!")
 # Asynchronous function to fetch processed data
 async def fetch_data_async():
     try:
-        response = requests.get("http://127.0.0.1:8502/dashboard_api/data")
+        response = requests.get("http://127.0.0.1:8503/dashboard_api/data")
         if response.status_code == 200:
             input_queue.put(response.json())
         else:
