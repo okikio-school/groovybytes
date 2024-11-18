@@ -28,10 +28,7 @@ export async function sendToPython(type: "file" | "json", payload: File | JsonTy
       body: JSON.stringify(payload),
     }
 
-    const response = await fetch(pythonUrl, {
-      method: 'POST',
-      body: formData,
-    });
+    const response = await fetch(pythonUrl, fetchOpts);
 
     // Parse the JSON response
     const result = await response.json();
